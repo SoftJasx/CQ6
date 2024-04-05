@@ -1,0 +1,99 @@
+import java.io.*;
+import java.math.*;
+import java.security.*;
+import java.text.*;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.regex.*;
+import java.util.stream.*;
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
+
+class Result {
+
+    // Utility function to find maximum subsequence sum; recursive approach is not efficient for large inputs
+    private static int maxSubsequenceSum(List<Integer> arr) {
+    int max = Collections.max(arr); // Find the maximum value in the array
+    if (max < 0) return max; // If the max is negative, return it as the max subsequence sum
+    
+    // Otherwise, calculate the sum of all positive numbers
+    return arr.stream().filter(x -> x > 0).reduce(0, Integer::sum);
+}
+    
+    private static int maxCrossingSum(List<Integer> arr, int l, int m, int h) {
+        // Include elements on left of mid.
+        int sum = 0;
+        int left_sum = Integer.MIN_VALUE;
+        for (int i = m; i >= l; i--) {
+            sum = sum + arr.get(i);
+            if (sum > left_sum) left_sum = sum;
+        }
+
+        // Include elements on right of mid
+        sum = 0;
+        int right_sum = Integer.MIN_VALUE;
+        for (int i = m + 1; i <= h; i++) {
+            sum = sum + arr.get(i);
+            if (sum > right_sum) right_sum = sum;
+        }
+
+        // Return sum of elements on left and right of mid
+        // returning only left_sum + right_sum will fail for [-2, 1]
+        return Math.max(left_sum + right_sum, Math.max(left_sum, right_sum));
+    }
+
+    // Returns sum of maxium sum subarray in aa[l..h]
+    private static int maxSubArraySum(List<Integer> arr, int l, int h) {
+        // Base Case: Only one element
+        if (l == h) return arr.get(l);
+
+        // Find middle point
+        int m = (l + h)/2;
+
+        /* Return maximum of following three possible cases:
+           a) Maximum subarray sum in left half
+           b) Maximum subarray sum in right half
+           c) Maximum subarray sum such that the subarray crosses the midpoint */
+        return Math.max(Math.max(maxSubArraySum(arr, l, m), maxSubArraySum(arr, m+1, h)), maxCrossingSum(arr, l, m, h));
+    }
+
+    public static List<Integer> maxSubarray(List<Integer> arr) {
+        int maxSubarray = maxSubArraySum(arr, 0, arr.size() - 1);
+        int maxSubsequence = maxSubsequenceSum(arr);
+        return Arrays.asList(maxSubarray, maxSubsequence);
+    }
+}
+
+public class Solution {
+    public static void main(String[] args) throws IOException {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(System.getenv("OUTPUT_PATH")));
+
+        int t = Integer.parseInt(bufferedReader.readLine().trim());
+
+        IntStream.range(0, t).forEach(tItr -> {
+            try {
+                int n = Integer.parseInt(bufferedReader.readLine().trim());
+
+                List<Integer> arr = Stream.of(bufferedReader.readLine().replaceAll("\\s+$", "").split(" "))
+                    .map(Integer::parseInt)
+                    .collect(toList());
+
+                List<Integer> result = Result.maxSubarray(arr);
+
+                bufferedWriter.write(
+                    result.stream()
+                        .map(Object::toString)
+                        .collect(joining(" "))
+                    + "\n"
+                );
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+
+        bufferedReader.close();
+        bufferedWriter.close();
+    }
+}
