@@ -1,0 +1,12 @@
+Recursive Strategy:
+
+Maximum Subarray Sum: The function would calculate the maximum sum that can be obtained by including or not including the current element. This involves recursively calculating the maximum subarray sum up to the current index and comparing it to the sum including the current element.
+Maximum Subsequence Sum: This sum can also be computed recursively by considering each element and deciding whether to include it in the sum based on whether it increases the overall maximum sum.
+Implementing Recursion in Java:
+Due to Java's limitations with recursion and stack size for large datasets, implementing a purely recursive solution for this problem is impractical. A dynamic programming approach is recommended for such cases.
+
+General Recursive Approach:
+
+Define base cases for when the array is empty or contains a single element.
+For the maximum subarray sum, recursively calculate the sum of the subarray ending at the current index by comparing the sum obtained by including the current element versus excluding it.
+For the maximum subsequence sum, recursively calculate the sum by including or excluding the current element based on its contribution to the maximum sum.
