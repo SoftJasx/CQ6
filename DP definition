@@ -1,0 +1,3 @@
+This solution initializes maxEndingHere and maxSoFar to the first element for the maximum subarray sum, and maxSubsequence is either the first element (if positive) or 0. 
+As it iterates through the array, it updates these values based on the current element. 
+For arrays with only negative numbers, it ensures the maximum subsequence sum is the largest negative number, addressing the issue of a default zero sum.
